@@ -12,7 +12,7 @@ function Suggestions({list, selected, action}) {
 			{list.map((s, i) => (
 				<ClayList.Item flex key={i} className={selected === (i + 1) ? 'is-selected' : ''}>
 					<ClayList.ItemField expand>
-						<ClayList.ItemTitle>{s}</ClayList.ItemTitle>
+						<ClayList.ItemTitle>{s.label}</ClayList.ItemTitle>
 					</ClayList.ItemField>
 					<ClayList.ItemField>
 						<button className="btn btn-monospaced btn-sm btn-primary" type="button" onClick={() => action(i + 1)}>
@@ -27,11 +27,10 @@ function Suggestions({list, selected, action}) {
 	);
 }
 
-export default class AddOrCreate extends React.Component {
+class AddOrCreateBase extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			active: props.active,
 			focus: false,
 			selected: 0, 
 			suggestions: [],
@@ -45,12 +44,11 @@ export default class AddOrCreate extends React.Component {
 
 	focus() {
 		this.setState({
-			active: true,
 			focus: true,
 		});
 		window.addEventListener('keydown', this.handleKeyDown);
-		this.card.current.scrollIntoView({behavior: "smooth"});
-		this.props.onFocus && this.props.onFocus();
+		this.props.onFocusIn && this.props.onFocusIn();
+		this.input.current.focus();
 	}
 
 	blur() {
@@ -90,13 +88,6 @@ export default class AddOrCreate extends React.Component {
 		}
 	}
 
-	shouldComponentUpdate(nextProps) {
-		if (!nextProps.active) {
-			this.input.current.blur();
-		}
-		return true;
-	}
-
 	submit(el = this.state.selected) {
 		if (el > 0) {
 			this.props.onSubmit({
@@ -106,7 +97,7 @@ export default class AddOrCreate extends React.Component {
 		} else if (this.state.value) {
 			this.props.onSubmit({
 				action: 'create',
-				value: this.state.value
+				value: {id: null, label: this.state.value}
 			});
 		}
 		this.clear();
@@ -122,12 +113,30 @@ export default class AddOrCreate extends React.Component {
 	}
 
 	componentDidUpdate() {
+		if (!this.props.active) {
+			this.input.current.blur();
+		}
 		setTimeout(() => this.card.current.scrollIntoView({behavior: "smooth"}), 0);
+	}
+
+	handleFocusOut(e) {
+		this._timeoutID = setTimeout(() => {
+			this.props.onFocusOut && this.props.onFocusOut();
+    }, 0);
+	}
+
+	handleFocusIn(e) {
+    clearTimeout(this._timeoutID);
 	}
 
 	render() {
 		return (
-			<div className="card add-or-create" ref={this.card}>
+			<div
+				className={`card add-or-create ${this.state.focus ? 'has-focus' : ''}`}
+				ref={this.card}
+				onBlur={e => this.handleFocusOut(e)}
+				onFocus={e => this.handleFocusIn(e)}
+			>
 				<div className="card-header">
 					Add new option
 				</div>
@@ -160,7 +169,7 @@ export default class AddOrCreate extends React.Component {
 						</div>
 					</div>
 				</div>
-				{this.state.value && this.state.active &&
+				{this.state.value && this.props.active &&
 					<div className="card-body">
 						<ClayList>
 							<ClayList.Header>Create new specification</ClayList.Header>
@@ -184,7 +193,7 @@ export default class AddOrCreate extends React.Component {
 }
 
 
-React.forwardRef((props, ref) => {
+export default React.forwardRef((props, ref) => {
 	const [active, setActive] = React.useState(false);
 	
 	function closeAndSubmit(e) {
@@ -194,11 +203,12 @@ React.forwardRef((props, ref) => {
 
   return (
 		<Expose active={active} onClose={() => setActive(false)}>
-			<AddOrCreate
+			<AddOrCreateBase
 				{...props}
 				active={active}
 				onSubmit={closeAndSubmit}
-				onFocus={() => setActive(true)}
+				onFocusIn={() => setActive(true)}
+				onFocusOut={() => setActive(false)}
 				innerRef={ref}
 			/>
 		</Expose>

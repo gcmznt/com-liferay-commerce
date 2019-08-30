@@ -5,24 +5,24 @@ export default function Expose({active, onClose, children}) {
   const content = React.useRef();
 
   React.useEffect(() => {
+    setHeight(content.current.getBoundingClientRect().height);
+  }, [content]);
+
+  React.useEffect(() => {
     const handleEscKey = (e) => (e.key === "Escape") && onClose();
 
-    if (active) {
-      setHeight(content.current.getBoundingClientRect().height);
-      window.addEventListener("keydown", handleEscKey);
-    } else {
-      setHeight(0);
-      window.removeEventListener("keydown", handleEscKey);
-    }
+    active
+      ? window.addEventListener("keydown", handleEscKey)
+      : window.removeEventListener("keydown", handleEscKey);
   }, [active, onClose]);
 
   return (
     <div
-      className={`expose ${height ? "is-open" : "is-closed"}`}
-      style={height ? { height } : {}}
+      className={`expose ${active ? "is-open" : "is-closed"}`}
+      style={active ? { height } : {}}
     >
-      <div className="backdrop" onClick={onClose} />
-      <div className="content" ref={content}>
+      <div className="expose__backdrop" onClick={onClose} />
+      <div className="expose__content" ref={content}>
         {children}
       </div>
     </div>

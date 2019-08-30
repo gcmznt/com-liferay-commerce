@@ -1,7 +1,7 @@
 .expose {
   --transition-time: 200ms;
 
-  .content {
+  &__content {
     --transition-delay: var(--transition-time);
 
     position: relative;
@@ -9,24 +9,17 @@
       box-shadow var(--transition-time) ease,
       z-index 0s ease var(--transition-delay);
     z-index: 0;
-  }
 
-  &.is-open {
-    .content {
+    .expose.is-open & {
       --transition-delay: 0s;
 
       box-shadow: 0 40px 40px -40px rgba(0, 0, 0, 0.3);
       width: 100%;
       z-index: 100001;
     }
-
-    .backdrop {
-      pointer-events: all;
-      opacity: 0.7;
-    }
   }
 
-  .backdrop {
+  &__backdrop {
     background-color: #E5E5E5;
     bottom: 0;
     content: '';
@@ -39,6 +32,11 @@
     top: 0;
     transition: all ease var(--transition-time);
     z-index: 100000;
+
+    .expose.is-open & {
+      pointer-events: all;
+      opacity: 0.7;
+    }
   }
 }
 

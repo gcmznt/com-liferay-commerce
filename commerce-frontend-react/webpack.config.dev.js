@@ -63,6 +63,7 @@ module.exports = {
 		// filename: path.join(outputPath, '/bundle.js'),
 		open: true,
 		port: 9000,
+		disableHostCheck: true,
 		hot: true,
 		historyApiFallback: true,
 		before: function(app) {
