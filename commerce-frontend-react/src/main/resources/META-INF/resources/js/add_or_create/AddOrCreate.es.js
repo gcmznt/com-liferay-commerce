@@ -5,17 +5,24 @@ import Expose from './Expose.es';
 
 import './add-or-create.scss';
 
-function Suggestions({list, selected, action}) {
+function Suggestions({list, selected, action, onHover}) {
 	return (
 		<>
 			<ClayList.Header>Add an existing specification</ClayList.Header>
 			{list.map((s, i) => (
-				<ClayList.Item flex key={i} className={selected === (i + 1) ? 'is-selected' : ''}>
+				<ClayList.Item
+					flex
+					key={i}
+					className={selected === (i + 1) ? 'is-selected' : ''}
+					onMouseEnter={() => onHover(i + 1)}
+					onClick={e => action(e, i + 1)}
+					tabIndex="0"
+				>
 					<ClayList.ItemField expand>
 						<ClayList.ItemTitle>{s.label}</ClayList.ItemTitle>
 					</ClayList.ItemField>
 					<ClayList.ItemField>
-						<button className="btn btn-monospaced btn-sm btn-primary" type="button" onClick={() => action(i + 1)}>
+						<button className="btn btn-monospaced btn-sm btn-primary" type="button" onClick={e => action(e, i + 1)}>
 							<svg className="lexicon-icon lexicon-icon-plus" focusable="false" role="presentation">
 								<use href="./icons.svg#plus"></use>
 							</svg>
@@ -40,6 +47,7 @@ class AddOrCreateBase extends React.Component {
 		this.input = React.createRef();
 
 		this.handleKeyDown = this.handleKeyDown.bind(this);
+		this.action = this.action.bind(this);
 	}
 
 	focus() {
@@ -72,20 +80,31 @@ class AddOrCreateBase extends React.Component {
 		return (this.state.suggestions.length + 1 + this.state.selected + step) % (this.state.suggestions.length + 1);
 	}
 
+	select(selected) {
+		this.setState({ selected });
+	}
+
 	handleKeyDown(e) {
 		switch (e.key) {
 			case 'ArrowDown':
 				e.preventDefault();
-				this.setState({ selected: this.getSelection(1) });
+				this.select(this.getSelection(1));
 				break;
 			case 'ArrowUp':
 				e.preventDefault();
-				this.setState({ selected: this.getSelection(-1) });
+				this.select(this.getSelection(-1));
 				break;
 			case 'Enter':
+				e.preventDefault();
 				this.submit();
 				break;
 		}
+	}
+
+	action(e, i) {
+		e.preventDefault();
+		e.stopPropagation();
+		this.submit(i);
 	}
 
 	submit(el = this.state.selected) {
@@ -173,17 +192,36 @@ class AddOrCreateBase extends React.Component {
 					<div className="card-body">
 						<ClayList>
 							<ClayList.Header>Create new specification</ClayList.Header>
-							<ClayList.Item flex className={this.state.selected === 0 ? 'is-selected' : ''}>
+							<ClayList.Item
+								flex
+								className={this.state.selected === 0 ? 'is-selected' : ''}
+								onMouseEnter={() => this.select(0)}
+								onClick={e => this.action(e, 0)}
+								tabIndex="0"
+							>
 								<ClayList.ItemField expand>
 									<ClayList.ItemTitle>{this.state.value}</ClayList.ItemTitle>
 								</ClayList.ItemField>
 
 								<ClayList.ItemField>
-									<button className="btn btn-link btn-sm" type="button" onClick={() => this.submit(0)}>Create new specification</button>
+									<button
+										className="btn btn-link btn-sm"
+										type="button"
+										onClick={e => this.action(e, 0)}
+									>
+										Create new specification
+									</button>
 								</ClayList.ItemField>
 							</ClayList.Item>
 
-							{this.state.suggestions.length ? <Suggestions list={this.state.suggestions} selected={this.state.selected} action={e => this.submit(e)} /> : null}
+							{this.state.suggestions.length ?
+								<Suggestions
+									list={this.state.suggestions}
+									selected={this.state.selected}
+									action={this.action}
+									onHover={e => this.select(e)}
+								/>
+							: null}
 						</ClayList>
 					</div>
 				}
