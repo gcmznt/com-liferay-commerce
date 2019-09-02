@@ -18,7 +18,7 @@ export default class Gallery extends React.Component {
 	}
 
 	onClick(tabs) {
-    window.sidePanel.current.load(tabs);
+    window.SidePanel.load(tabs);
   }
 
 	onMouseEnter(image) {
