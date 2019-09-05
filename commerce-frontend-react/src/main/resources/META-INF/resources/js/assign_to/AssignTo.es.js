@@ -42,7 +42,7 @@ export default function AssignTo(props) {
 												focusable="false"
 												role="presentation"
 											>
-												<use href="/images/icons/icons.svg#search"/>
+												<use href="/icons.svg#search"/>
 											</svg>
 											</button>
 										</span>

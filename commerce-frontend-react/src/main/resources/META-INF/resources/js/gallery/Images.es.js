@@ -13,15 +13,15 @@ export default class Images extends React.Component {
 					onMouseLeave={() => this.props.onMouseLeave(img.url)}
 					onClick={() => this.props.onClick([
 						{
-							url: `/api/fake-img/${encodeURIComponent(img.url)}`,
-							pageName: 'Details',
-							slug: 'details'
-						},
-						{
-							url: '/api/fake-html',
+							url: `/iframe.html?${Math.random()}`,
 							pageName: 'Edit',
 							slug: 'edit'
 						},
+						// {
+						// 	url: `/api/fake-img/${encodeURIComponent(img.url)}`,
+						// 	pageName: 'Details',
+						// 	slug: 'details'
+						// },
 					])}
 				/>
 			))}

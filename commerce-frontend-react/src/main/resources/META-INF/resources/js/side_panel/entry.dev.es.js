@@ -1,21 +1,21 @@
 import launcher from './entry.es';
 
 window.SidePanel = launcher('side-panel', 'side-panel', {
-	size: 'medium',
+	size: 'large',
 	show: false,
 	tabs: [
 		{
-			url: '/api/fake-html',
+			url: '/iframe.html',
 			pageName: 'Comments',
 			slug: 'comments',
 		},
 		{
-			url: '/api/fake-html',
+			url: '/iframe.html',
 			pageName: 'Edit',
 			slug: 'edit',
 		},
 		{
-			url: '/api/fake-html',
+			url: '/iframe.html',
 			pageName: 'Changelog',
 			slug: 'changelog',
 		},

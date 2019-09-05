@@ -22,4 +22,4 @@ const props = {
 
 window.modal = launcher('modal', 'modal-root', props);
 
-window.modal.open();
+window.modal && window.modal.open();

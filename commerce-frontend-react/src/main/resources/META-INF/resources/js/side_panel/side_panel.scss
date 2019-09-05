@@ -20,4 +20,14 @@
   &--large { width: 66%; }
   &--xlarge { width: 75%; }
   &--full { width: 100%; }
+
+  .tab-content,
+  .tab-pane {
+    height: 100%;
+  }
+
+  iframe {
+    height: 100%;
+    width: 100%;
+  }
 }

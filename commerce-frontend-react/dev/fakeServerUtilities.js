@@ -7,9 +7,6 @@ function defineServerResponses(app) {
 			randomId: faker.random.uuid(),
 		});
 	});
-	app.get('/api/fake-html', (_, res) => {
-		res.send(faker.fake("<script>console.log('tab content loaded')</script><p>{{name.lastName}}, {{name.firstName}} {{name.suffix}}</p><button onclick='window.SidePanel.toggle()'>Close</button>"));
-	});
 	app.get('/api/fake-img/:url', (req, res) => {
 		res.send(`<img src="${req.params.url}" />`);
 	});

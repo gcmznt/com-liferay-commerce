@@ -13,7 +13,7 @@ export default class SidePanel extends React.Component {
 			currentTab: props.currentTab || props.tabs[0],
 			content: '',
 		}
-		this.getContent(props.currentTab || props.tabs[0]);
+		// this.getContent(props.currentTab || props.tabs[0]);
 		this.selectPane = this.selectPane.bind(this);
 		this.content = React.createRef();
 	}
@@ -37,10 +37,11 @@ export default class SidePanel extends React.Component {
 	}
 
 	getContent(currentTab) {
-		return fetch(currentTab.url)
-			.then(res => res.text())
-			.then(content => this.setState({ content, currentTab }))
-			.then(() => globalEval.runScriptsInElement(this.content.current));
+		this.setState({ currentTab })
+		// return fetch(currentTab.url)
+		// 	.then(res => res.text())
+		// 	.then(content => this.setState({ content, currentTab }))
+		// 	.then(() => globalEval.runScriptsInElement(this.content.current));
 	}
 
 	render() {
@@ -48,10 +49,10 @@ export default class SidePanel extends React.Component {
 
 		return (
 			<div className={`side-panel side-panel--${this.props.size} ${visibility}`}>
-				<Tabs tabs={this.state.tabs} onChange={this.selectPane} current={this.state.currentTab.slug} />
+				{this.state.tabs.length > 1 && <Tabs tabs={this.state.tabs} onChange={this.selectPane} current={this.state.currentTab.slug} />}
 				<div className="tab-content">
-					<div className="active fade show tab-pane" role="tabpanel" ref={this.content} dangerouslySetInnerHTML={{__html: this.state.content}}>
-						
+					<div className="active fade show tab-pane" role="tabpanel" ref={this.content}>
+						<iframe src={this.state.currentTab.url} frameBorder="0"></iframe>
 					</div>
 				</div>
 			</div>
